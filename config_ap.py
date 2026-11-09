@@ -69,6 +69,19 @@ dhcp-option=6,1.1.1.1,8.8.8.8
 server=1.1.1.1
 """
 
+HOSTAPD_CONF_TEMPLATE = """interface={interface}
+driver=nl80211
+ssid={ssid}
+channel={channel}
+hw_mode=g
+
+# Authentification WPA2-PSK
+auth_algs=1
+wpa=2
+wpa_key_mgmt=WPA-PSK
+wpa_passphrase={wpa_passphrase}
+rsn_pairwise=CCMP
+"""
 
 # ============================================================
 # Fonctions interactives
