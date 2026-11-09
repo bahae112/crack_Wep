@@ -59,5 +59,3 @@ Les deux scripts sont **interactifs** : ils guident l'utilisateur pas à pas (ch
 
 ---
 
-## 📁 Structure du projet
-
