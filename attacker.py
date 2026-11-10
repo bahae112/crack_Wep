@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import re
+# remember to add the option of the attack for wpa and wep for now the attack target only wep
 
 # ============================================================
 # Fonction run() intégrée
