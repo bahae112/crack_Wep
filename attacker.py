@@ -236,6 +236,7 @@ def main():
         print("[i] Astuce : utilisez aireplay-ng en parallèle pour accélérer :")
         print(f"    sudo aireplay-ng --arpreplay -b {bssid} -h <MAC_client> {monitor_interface}")
 
+    # 6. cassage de la cle WPA-PSK ( crackage avec Hashcat mode 22000)
 
 if __name__ == "__main__":
     main()
