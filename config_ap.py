@@ -69,7 +69,7 @@ dhcp-option=6,1.1.1.1,8.8.8.8
 server=1.1.1.1
 """
 
-HOSTAPD_CONF_TEMPLATE = """interface={interface}
+HOSTAPD_CONF_TEMPLATE_wpa = """interface={interface}
 driver=nl80211
 ssid={ssid}
 channel={channel}
@@ -126,7 +126,9 @@ def check_ap_mode(interface):
     return False
 
 
-def configure_ap(interface, ssid, channel, wep_key0, bssid=None):
+
+
+def configure_ap(interface, ssid, channel, wep_key0, bssid=None,mode=1):
     """Configure et démarre hostapd + dnsmasq."""
     # 1. Vérifier hostapd
     if run("which hostapd > /dev/null 2>&1") != 0:
@@ -137,12 +139,23 @@ def configure_ap(interface, ssid, channel, wep_key0, bssid=None):
     run("mkdir -p /etc/hostapd")
 
     # 3. Générer le fichier hostapd
-    hostapd_conf = HOSTAPD_CONF_TEMPLATE.format(
+    if( mode == 1) :
+        # mode WEP
+        hostapd_conf = HOSTAPD_CONF_TEMPLATE.format(
         interface=interface,
         ssid=ssid,
         channel=channel,
         wep_key0=wep_key0
     )
+    elif( mode == 2):
+        # mode WPA-PSK
+        hostapd_conf =  HOSTAPD_CONF_TEMPLATE_wpa.format(
+            interface=interface,
+            ssid=ssid,
+            channel=channel,
+            wpa_passphrase=wep_key0
+        )
+ 
     print(f"[*] Écriture de /etc/hostapd/ap.conf")
     with open("/tmp/hostapd_ap.conf", "w") as f:
         f.write(hostapd_conf)
@@ -212,6 +225,19 @@ def main():
     cprint("   Configuration interactive du Point d'Accès WEP",Colors.GREEN)
     cprint("=" * 50,Colors.YELLOW)
 
+    # 0. ask for the mode 
+    print("Entrer le mode de configuration de AP \n")
+    print("1. mode wep\n")
+    print("2. mode WPA-PSK\n")
+    while True :
+        try:
+            mode = int(input("Votre choix [1/2] :"))
+            if mode in (1,2):
+                break
+            else:
+                print("[-] choix invalide . entrer entre 1 et 2")
+        except ValueError:
+            cprint("[-] Entrée invalide. Entrez un nombre (1 ou 2).", Colors.RED)
     # 1. Interface AP
     list_interfaces()
     ap_interface = ask(
@@ -266,7 +292,7 @@ def main():
 
     # 8. Exécution
     print("\n=== Configuration du point d'accès ===")
-    configure_ap(ap_interface, ssid, channel, wep_key0, bssid)
+    configure_ap(ap_interface, ssid, channel, wep_key0, bssid,mode)
 
     print("\n=== Configuration du NAT ===")
     enable_nat(ap_interface, internet_interface)
